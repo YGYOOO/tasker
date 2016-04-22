@@ -1,0 +1,49 @@
+.login{
+  width:450px;
+  height:310px;
+  margin:0 auto !important;
+  margin-top: 90px !important;
+}
+
+.login2{
+  width:310px;
+  height:300px;
+  margin:0 auto;
+}
+
+.container{
+  position:relative;
+  width:740px !important;
+  padding-top: 30px;
+}
+
+#profile{
+  position:absolute;
+  right:0px;
+  top:80px;
+  font-size: 20px;
+  color: grey;
+}
+
+.btn-delete{
+  margin-top: -6px !important;
+  padding: 0px !important;
+  width:33px !important;
+  height:33px !important;
+}
+
+.editor{
+  margin-top: 9px !important;
+  width: 200px !important;
+}
+
+.dateEditor{
+  margin-top: 9px !important;
+  width: 120px !important;
+}
+
+.top{
+  height:65px !important;
+  padding-top:10px !important;
+  padding-bottom:10px !important;
+}

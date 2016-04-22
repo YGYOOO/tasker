@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tasker</title>
+    <link rel="stylesheet" href="/resources/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="/resources/js/app.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body class="grey lighten-3">
+  <nav >
+  <div class="nav-wrapper teal lighten-2">
+    <a href="#" class="brand-logo center ">Tasker</a>
+    <ul id="pages">
+      <li><a href="/tasks.html">Tasks</a></li>
+      <li><a href="/userManagement.html">Manage Users</a></li>
+    </ul>
+    <ul class="right">
+      <li><a onclick="logout()">logout</a></li>
+    </ul>
+  </div>
+</nav>
+    <div class="container">
+      <h2>Tasker</h2>
+      <a id="profile">
+      </a>
+      <div id='top1' class="card-panel top grey lighten-5" onMouseOver="adddepth('top1')" onMouseOut="subdepth('top1')">
+        Description&nbsp;&nbsp;
+        <input id="description" type="text" placeholder="  task" style="width:180px">
+        &nbsp;&nbsp;&nbsp;Color code&nbsp;
+        <input id="colorCode" type="color" value="#000000" style="width:45px">
+        &nbsp;&nbsp;&nbsp;Due Date&nbsp;&nbsp;
+        <input id="dueDate" type="date" class="datepicker" style="width:130px">&nbsp;&nbsp;&nbsp;&nbsp;
+        <button class="btn-floating waves-effect waves-light btn" onclick="createTask()"><i class="material-icons">add</i></button>
+      </div>
+      <div id='top2' class="card-panel top grey lighten-5" onMouseOver="adddepth('top2')" onMouseOut="subdepth('top2')">
+        <input type="text" id="search1" placeholder="  search" style="width:150px">
+        &nbsp;&nbsp;
+        <input type="checkbox" id="c1"/>
+        <label for="c1">Incomplete Only</label>
+        &nbsp;&nbsp;&nbsp;
+        <input type="checkbox" id="c2"/>
+        <label for="c2">Over-due only</label>
+      </div>
+      <div id='tasks' class="card-panel grey lighten-5" onMouseOver="adddepth('tasks')" onMouseOut="subdepth('tasks')">
+        <table class=" highlight">
+          <thead>
+            <tr>
+              <th class="col s4">Description</th>
+              <th class="col s2" style="width:15%">Color</th>
+              <th class="col s3" style="width:20%">Due</th>
+              <th class="col" style="width:15%">Completed</th>
+              <th class="col" style="width:8%"></th>
+            </tr>
+          </thead>
+          <tbody id="tasksList">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    $(document).ready(function(){
+	  $('.datepicker').pickadate({
+        selectMonths: true,
+        selectYears: 16,
+        format: 'mm/dd/yyyy',
+      });
+    	
+      getPrincipal('taskts');
+      
+      $(document).on('change','.taskAttr',function(){
+        updateTaks($(this).parent().parent().attr('id'));
+      });
+
+      $(document).on('change','#c1',function(){
+        $('#c2').prop('checked',false);
+        getAll();
+      });
+      $(document).on('change','#c2',function(){
+        $('#c1').prop('checked',false);
+        getAll();
+      });
+      $(document).on('change','#search1',function(){
+        getAll();
+      });
+    })
+  </script>
+</html>

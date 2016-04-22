@@ -1,0 +1,11 @@
+<div>
+  <div ng-show="!isLoggedIn()">
+    <h3>Login</h3>
+    <form class="form">
+      <span style="color:red;font-style:italic;" id="warning" ng-show="hasError">Error with username/password</span>
+      <input type="text" class="form-control" placeholder="username" name="username" ng-model="username" required><br>
+      <input type="password" class="form-control" placeholder="password" name="password" ng-model="password" required><br>
+      <input type="submit" value="Login" ng-click="login()">
+    </form>
+  </div>
+</div>

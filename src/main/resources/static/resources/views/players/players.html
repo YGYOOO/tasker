@@ -1,0 +1,14 @@
+<div>
+  <h2>Player List</h2>
+  <div class="well well-sm">
+    <input type="text" name="player" placeholder="player name" ng-model="newPlayer.name">
+    <input type="text" name="position" placeholder="position" ng-model="newPlayer.position">
+    <span class="btn btn-sm btn-primary pull-right" ng-click="addPlayer()">+</span></h2>
+  </div>
+  <ul>
+    <li ng-repeat="thing in things" style="margin-bottom: .5em;list-display-style:none">
+      <span class="btn btn-xs btn-danger" ng-click="delete(thing)">delete</span>
+      <a href="#/things_list/{{thing.id}}">{{thing.name}}</a>
+    </li>
+    <ul>
+</div>
