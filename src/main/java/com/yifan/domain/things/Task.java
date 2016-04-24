@@ -1,18 +1,18 @@
 package com.yifan.domain.things;
 
-public class Thing {
+public class Task {
 	private String description;
 	private String due;
 	private String color;
-	private String completed;
+	private boolean completed;
 	private String id;
 	private String ownerId;
 
-	public Thing( ) {
+	public Task( ) {
 		
 	}
 	
-	public Thing( Builder b ) {
+	public Task( Builder b ) {
 		this.description = b.description;
 		this.due = b.due;
 		this.color = b.color;
@@ -45,11 +45,11 @@ public class Thing {
 		this.color = color;
 	}
 
-	public String getCompleted() {
+	public boolean isCompleted() {
 		return completed;
 	}
 
-	public void setCompleted(String completed) {
+	public void setCompleted(boolean completed) {
 		this.completed = completed;
 	}
 
@@ -75,7 +75,7 @@ public class Thing {
 		private String description;
 		private String due;
 		private String color;
-		private String completed;
+		private boolean completed;
 		private String id;
 		private String ownerId;
 		
@@ -94,7 +94,7 @@ public class Thing {
 			return this;
 		}
 		
-		public Builder completed( String completed ) {
+		public Builder completed( boolean completed ) {
 			this.completed = completed;
 			return this;
 		}
@@ -110,8 +110,8 @@ public class Thing {
 			return this;
 		}
 		
-		public Thing build() {
-			return new Thing( this );
+		public Task build() {
+			return new Task( this );
 		}
 	}
 }

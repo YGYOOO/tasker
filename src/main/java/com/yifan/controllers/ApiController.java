@@ -1,6 +1,11 @@
 package com.yifan.controllers;
 
 import java.security.Principal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yifan.domain.things.Thing;
-import com.yifan.services.ThingService;
+import com.yifan.domain.things.Task;
+import com.yifan.services.TaskService;
 import com.yifan.domain.users.User;
 import com.yifan.services.UserService;
 
@@ -26,7 +32,7 @@ public class ApiController {
 	private UserService userService;
 	
 	@Autowired
-	private ThingService thingService;
+	private TaskService taskService;
 	
 	private User getAuthenticatedUser(String id, Principal p ) {
 		User user = userService.loadUserByUsername( p.getName() );
@@ -38,24 +44,47 @@ public class ApiController {
 	
 	@RequestMapping(value = "/users/{uid}/tasks", method = RequestMethod.POST )
 	@PreAuthorize("hasAnyRole('ROLE_USER') and #user.id == #uid") 
-	public Thing createTask( 
+	public Task createTask( 
 			@PathVariable String uid,
 			@AuthenticationPrincipal User user,
-			@RequestBody Thing thing,
+			@RequestBody Task task,
 			Principal p ) {
 		User mUser = getAuthenticatedUser( uid, p );
-		thing.setOwnerId( mUser.getId() );
-		thingService.createThing( mUser, thing );
-		return thing;
+		task.setOwnerId( mUser.getId() );
+		taskService.createTask( mUser, task );
+		return task;
 	}
 	
 	@RequestMapping(value="/users/{uid}/tasks", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_USER') and #user.id == #uid")
-	public List<Thing> getTaks(
+	public List<Task> getTaks(
 			@PathVariable String uid,
+			@RequestParam(defaultValue="false", required=false) String incomplete,
+			@RequestParam(defaultValue="false", required=false) String overdue,
+			@AuthenticationPrincipal User user,
+			Principal p) throws ParseException{
+		return taskService.getTasksByOwner(user, incomplete, overdue);
+	}
+	
+	@RequestMapping(value="/users/{uid}/tasks/{tid}", method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_USER') and #user.id == #uid")
+	public Task updateTaks(
+			@PathVariable String uid,
+			@PathVariable String tid,
+			@AuthenticationPrincipal User user,
+			@RequestBody Task task,
+			Principal p){
+		return taskService.updateTask(user, task);
+	}
+	
+	@RequestMapping(value="/users/{uid}/tasks/{tid}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasAnyRole('ROLE_USER') and #user.id == #uid")
+	public Task deleteTaks(
+			@PathVariable String uid,
+			@PathVariable String tid,
 			@AuthenticationPrincipal User user,
 			Principal p){
-		return thingService.getThingsByOwner(user);
+		return taskService.deleteTask(user, tid);
 	}
 	
 	@Secured({"ROLE_ADMIN", "ROLE_USER"} )
@@ -63,15 +92,5 @@ public class ApiController {
 	public User getAuthenticatedUser( Principal p ) {
 		User user = userService.loadUserByUsername (p.getName() );
 		return user;
-	}
-	
-	@RequestMapping(value = "/users/{uid}/things", method = RequestMethod.GET )
-	@PreAuthorize("hasAnyRole('ROLE_USER') and #user.id == #uid") 
-	//@Secured({"ROLE_ADMIN","ROLE_USER"})
-	public String getThings(@PathVariable String uid,
-										@AuthenticationPrincipal User user,
-										 Principal p ) {
-		//User user = getAuthenticatedUser( uid, p );
-		return "test";
 	}
 }

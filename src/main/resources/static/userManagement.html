@@ -3,8 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" href="/resources/css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src="/resources/js/app.js"></script>
+
 </head>
 <body>
-
+  <nav >
+	  <div class="nav-wrapper teal lighten-2">
+	    <a href="#" class="brand-logo center ">Tasker</a>
+	    <ul class="pages">
+	      <li><a href="/tasks.html">Tasks</a></li>
+	      <li><a href="/userManagement.html">Manage Users</a></li>
+	    </ul>
+	    <ul class="right">
+	      <li><a onclick="logout()">logout</a></li>
+	    </ul>
+	  </div>
+  </nav>
+  <script>
+  $(document).ready(function(){
+      getPrincipal('userManagement');
+    })
+  </script>
 </body>
 </html>

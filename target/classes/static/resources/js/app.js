@@ -57,7 +57,7 @@ var showTasks = function(result){
       + tasks[n].id + '"></label></td><td><button class="waves-light waves-effect btn red btn-delete"'
       + 'onclick="deleteTask('+ t +')"><i class="material-icons">delete</i></button></td></tr>';
       $('#tasksList').append(t);
-      if(tasks[n].complete === 'true' || tasks[n].complete === true){
+      if(tasks[n].completed === 'true' || tasks[n].completed === true){
         $('#' + tasks[n].id).children().eq(3).children().prop('checked', true);
       }
       else{
@@ -97,8 +97,8 @@ var deleteAnimation = function(tid){
 }
 
 var deleteTask = function(tid){
-  url = 'tasker/users/' + user.id + '/tasks/' + tid;
-  $.ajax(url, {type: 'DELETE', success: deleteAnimation(tid), error: redirectToLogin});
+  url = 'api/users/' + user.id + '/tasks/' + tid;
+  $.ajax(url, {type: 'DELETE'});
 }
 
 var editDescription = function(tid){
@@ -160,11 +160,14 @@ var updateTaks = function(tid){
   var dueDate = $("#" + tid).children().eq(2).children().eq(0).html();
   dueDate = convertDateFormat(dueDate);
   var complete = $("#" + tid).children().eq(3).children().prop('checked');
-  var body = {description: description, colorCode: colorCode,
-    dueDate: dueDate, complete: complete};
-  url = 'tasker/users/' + user.id + '/tasks/' + tid;
+  var body = {description: description, color: colorCode,
+    due: dueDate, completed: complete, id:tid, ownerId: user.id};
+  url = 'api/users/' + user.id + '/tasks/' + tid;
   if(!editing){
-    $.ajax(url, {type: 'PUT', data: body, success: getAll, error: redirectToLogin});
+    $.ajax(url, {headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json' 
+    },type: 'PUT', data: JSON.stringify(body), error: redirectToLogin});
   }
   else{
     alert("Please click '√' to save edition.");
@@ -201,12 +204,30 @@ var logout = function(){
 
 var judgePage = function(currentPage){
 	var isAdmin = false;
+	var isUser = false;
 	user.roles.forEach(function(e){
-		if(e.authority ==="ROLE_ADMIN")
+		if(e.authority ==="ROLE_ADMIN"){
 			isAdmin = true;
+		}
+		if(e.authority ==="ROLE_USER"){
+			isUser = true;
+		}
+			
 	});
-	if(currentPage === "taskts" && isAdmin)
-		redirectToUserManagement();
-	if(currentPage === "userManagement" && !isAdmin)
-		redirectToTasks();
+	if(currentPage === "taskts"){
+		if(isUser && !isAdmin)
+			$(".pages").children().eq(1).css('display', 'none');
+		else if(!isUser && isAdmin)
+			redirectToUserManagement();
+		else if(!isUser && !isAdmin)
+			redirectToLogin();
+	}
+	else if(currentPage === "userManagement"){
+		if(isUser && !isAdmin)
+			redirectToTasks();
+		else if(!isUser && isAdmin)
+			$(".pages").children().eq(0).css('display', 'none');
+		else if(!isUser && !isAdmin)
+			redirectToLogin();
+	}
 }
