@@ -14,29 +14,24 @@ import com.yifan.domain.users.User;
 
 @Repository
 public class UserRepository {
-	public User user1, user2;
+	public User superAdmin;
 	public Map<String, User> users;
+	public final String superAdminName;
+	public final String superAdminPassword;
 	
 	public UserRepository(){
+		superAdminName = "Bilbo";
+		superAdminPassword = "Baggins";
 		users = new HashMap<String, User>();
-		List<Role> roles = Arrays.asList(new Role[]{new Role("ROLE_USER")});
-		user1 = new User.Builder()
-				.userName("yifan")
-				.password("123")
+		List<Role> roles = Arrays.asList( new Role[] {new Role("ROLE_ADMIN") } );
+		superAdmin = new User.Builder()
+				.userName(superAdminName)
+				.password(superAdminPassword)
 				.roles(roles)
-				.id( UUID.randomUUID().toString() )
-				.build();
-		
-		roles = Arrays.asList( new Role[] { new Role("ROLE_USER"), new Role("ROLE_ADMIN") } );
-		user2 = new User.Builder()
-				.userName("erfan")
-				.password("123")
-				.roles(roles)
-				.id( UUID.randomUUID().toString() )
+				.id("0")
 				.build();
 	
-		users.put(user1.getId(), user1);
-		users.put(user2.getId(), user2);
+		users.put(superAdmin.getId(), superAdmin);
 	}
 	
 	public User findByUserName(String username) {

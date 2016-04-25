@@ -10,7 +10,7 @@
     <script src="/resources/js/app.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
-  <body class="grey lighten-3">
+  <body class="grey lighten-4">
   <nav >
 	  <div class="nav-wrapper teal lighten-2">
 	    <a href="#" class="brand-logo center ">Tasker</a>
@@ -24,10 +24,10 @@
 	  </div>
   </nav>
     <div class="container">
-      <h2>Tasker</h2>
+<!--       <h2>Tasker</h2>
       <a id="profile">
-      </a>
-      <div id='top1' class="card-panel top grey lighten-5"  >
+      </a> -->
+      <div id='top1' class="card-panel top slideIn"  >
         Description&nbsp;&nbsp;
         <input id="description" type="text" placeholder="  task" style="width:180px">
         &nbsp;&nbsp;&nbsp;Color code&nbsp;
@@ -36,7 +36,7 @@
         <input id="dueDate" type="date" class="datepicker" style="width:130px">&nbsp;&nbsp;&nbsp;&nbsp;
         <button class="btn-floating waves-effect waves-light btn cyan" onclick="createTask()"><i class="material-icons">add</i></button>
       </div>
-      <div id='top2' class="card-panel top grey lighten-5">
+      <div id='top2' class="card-panel top slideIn">
         <input type="text" id="search1" placeholder="  search" style="width:150px">
         &nbsp;&nbsp;
         <input type="checkbox" id="c1"/>
@@ -45,7 +45,7 @@
         <input type="checkbox" id="c2"/>
         <label for="c2">Over-due only</label>
       </div>
-      <div id='tasks' class="card-panel grey lighten-5">
+      <div id='tasks' class="card-panel slideIn">
         <table class=" highlight">
           <thead>
             <tr>
@@ -84,6 +84,10 @@
         $('#c1').prop('checked',false);
         getAll();
       });
+      $(document).on('change','#search1',function(){
+    	  getAll();
+        });
+      
     })
   </script>
 </html>

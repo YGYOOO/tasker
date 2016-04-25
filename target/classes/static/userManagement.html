@@ -12,7 +12,7 @@
     <script src="/resources/js/app.js"></script>
 
 </head>
-<body>
+<body class="grey lighten-4">
   <nav >
 	  <div class="nav-wrapper teal lighten-2">
 	    <a href="#" class="brand-logo center ">Tasker</a>
@@ -26,7 +26,7 @@
 	  </div>
   </nav>
   <div id="addUser">
-  <div class="card-panel" style="text-align: center;">
+  <div class="card-panel slideIn" style="text-align: center;">
     <div class="input-field" style="float:left; margin-top:0px;">
       <input id="userName" type="text" class="validate">
       <label for="emailAddress">User Name</label>
@@ -37,7 +37,7 @@
   </div>
   </div>
   
-  <div id="manageUser" class="card-panel">
+  <div id="manageUser" class="card-panel slideIn">
   <table>
     <thead>
       <tr>
@@ -54,6 +54,7 @@
   <script>
   $(document).ready(function(){
       getPrincipal('userManagement');
+      
     })
   </script>
 </body>

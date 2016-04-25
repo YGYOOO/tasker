@@ -64,3 +64,14 @@
 .color_pink{
 	backgroud-color: rgb(238, 110, 115) !important;
 }
+
+.slideIn{
+  opacity: 0;
+  transform: rotateX(-90deg);
+}
+.slideIn.show{
+  opacity: 1;
+  transform: none;
+  transition: all .7s;
+  -webkit-transition: all .7s;
+}

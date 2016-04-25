@@ -18,9 +18,10 @@ public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	public User loadUserByUsername(String username) throws UsernameNotFoundException {		
+	public User loadUserByUsername(String username) throws UsernameNotFoundException{		
 		User user = userRepository.findByUserName(username);		
-		if(user == null) throw new UsernameNotFoundException("username");
+		if(user == null)
+			if(user == null) throw new UsernameNotFoundException("userId");
 		
 		User copy = new User.Builder()
 				.userName(user.getUsername())
@@ -58,6 +59,7 @@ public class UserService implements UserDetailsService {
 		String RED = "\u001B[31;1m";
 		String CYAN = "\u001B[36;1m";
 		String RESET = "\u001B[0m";
+		System.out.println();
 		System.out.println(CYAN + "=============================================");
 		System.out.println(RESET +  "Initail password for "+ GREEN + user.getUsername() +": " + RED + user.getPassword());
 		System.out.println(CYAN + "=============================================");

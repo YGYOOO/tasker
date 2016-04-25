@@ -10,6 +10,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,8 @@ public class ApiController {
 	
 	@Autowired
 	private TaskService taskService;
+	
+	public final String superAdminName = "Bilbo";
 	
 	private User getAuthenticatedUser(String id, Principal p ) {
 		User user = userService.loadUserByUsername( p.getName() );
@@ -95,7 +98,14 @@ public class ApiController {
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/user", method = RequestMethod.POST)
 	public User createUser(@RequestBody User user){
-		return userService.createUser(user);
+//		if(userService.loadUserByUsername(user.getUsername()) != null)
+//			return null;
+		try{
+			userService.loadUserByUsername(user.getUsername());
+	    }catch(UsernameNotFoundException e){
+	    	return userService.createUser(user);
+	    }
+		return null;
 	}
 	
 	@Secured("ROLE_ADMIN")
@@ -112,6 +122,8 @@ public class ApiController {
 			@RequestParam(defaultValue="false", required=false) String admin
 			){
 		User u = userService.findUserById(uid);
+		if(u.getUsername().equals(superAdminName))
+			return null;
 		boolean isUser = true;
 		boolean isAdmin = true;
 		if(user.equals("false"))
@@ -132,6 +144,9 @@ public class ApiController {
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(value = "/users/{uid}", method = RequestMethod.DELETE)
 	public User deleteUser(@PathVariable String uid){
+		User u = userService.findUserById(uid);
+		if(u.getUsername().equals(superAdminName))
+			return null;
 		return userService.deleteUser(uid);
 	}
 }

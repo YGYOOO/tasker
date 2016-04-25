@@ -25,7 +25,7 @@ var getPrincipal = function(currentPage){
   $.ajax('/api/user',
     {
       type: 'GET',
-      success: function(u){user = u;setUser(u);getAll();judgePage(currentPage);},
+      success: function(u){user = u;setUser(u);judgePage(currentPage);},
       error: redirectToLogin
     });
 }
@@ -66,6 +66,23 @@ var showTasks = function(result){
     }
   }
   editing = false;
+  var count = 0;
+  $('.slideIn').each(function(index, value){
+      setTimeout(function(){$('.slideIn').eq(index).addClass('show')}, 0);
+   });
+}
+
+var showNewTask = function(task){
+	var t = "'" + task.id + "'";
+    var t = '<tr class="task" id="'
+    + task.id + '"><td style="overflow: auto" onclick="editDescription('+ t +')"><div style="float:left">'
+    + task.description + '</div>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-pencil-square-o hvr-grow"></i></td><td><input class="taskAttr" type="color" value="'
+    + task.color + '"/></td><td onclick="editDueDate('+ t +')"><div style="float:left">'
+    + convertDateFormat2(task.due) + '</div>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-pencil-square-o hvr-grow"></i></td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="c_'
+    + task.id + '" type="checkbox" class="taskAttr"/><label for="c_'
+    + task.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete"'
+    + 'onclick="deleteTask('+ t +')"><i class="material-icons">delete</i></button></td></tr>';
+    $('#tasksList').append(t);
 }
 
 var createTask = function(){
@@ -80,25 +97,27 @@ var createTask = function(){
     $.ajax(url, {headers: { 
         'Accept': 'application/json',
         'Content-Type': 'application/json' 
-    },type: 'POST', data: JSON.stringify(body), success: function(e){console.log(e)}});
+    },type: 'POST', data: JSON.stringify(body), success:showNewTask, error: redirectToLogin});
   }
   else if(!description){
-    alert('Please enter description!');
+    Materialize.toast('Please enter description!', 3000);
   }
   else if(!due){
-    alert('Please enter dueDate!');
+	 Materialize.toast('Please enter dueDate!', 3000);
   }
 }
 
-var deleteAnimation = function(tid){
-  $( "#" + tid ).fadeOut("slow", function() {
-    getAll();
-  });
+var deleteAnimation = function(thing){
+	if(thing)
+		$( "#" + thing.id ).fadeOut("slow", function() {});
+	else{
+		Materialize.toast('Delete failed', 3000);
+	}
 }
 
 var deleteTask = function(tid){
   url = 'api/users/' + user.id + '/tasks/' + tid;
-  $.ajax(url, {type: 'DELETE', success: deleteAnimation(tid), error: redirectToLogin});
+  $.ajax(url, {type: 'DELETE', success: deleteAnimation, error: redirectToLogin});
 }
 
 var editDescription = function(tid){
@@ -112,7 +131,7 @@ var editDescription = function(tid){
     $('#' + tid).prepend(i);
   }
   else{
-    alert("Please click '√' to save edition.");
+    Materialize.toast("Please click '√' to save edition.!", 3000);
   }
 }
 
@@ -120,7 +139,7 @@ var editDescriptionDone = function(tid){
   var newD =  $('#' + tid).children().eq(0).children().eq(0).val();
   $('#' + tid).children().eq(0).remove();
   $('#' + tid).children().eq(0).children().eq(0).html(newD);
-  $('#' + tid).children().eq(0).attr({"style" : "display:inline"});
+  $('#' + tid).children().eq(0).attr({"style" : "display:"});
   editing = false;
   updateTaks(tid);
 }
@@ -141,7 +160,7 @@ var editDueDate = function(tid){
   });
   }
   else{
-    alert("Please click '√' to save edition.");
+	  Materialize.toast("Please click '√' to save edition.!", 3000);
   }
 }
 
@@ -149,7 +168,7 @@ var editDueDateDone = function(tid){
   var newD =  $('#' + tid).children().eq(2).children().eq(0).val();
   $('#' + tid).children().eq(2).remove();
   $('#' + tid).children().eq(2).children().eq(0).html(newD);
-  $('#' + tid).children().eq(2).attr({"style" : "display:inline"});
+  $('#' + tid).children().eq(2).attr({"style" : "display:"});
   editing = false;
   updateTaks(tid);
 }
@@ -170,7 +189,7 @@ var updateTaks = function(tid){
     },type: 'PUT', data: JSON.stringify(body), error: redirectToLogin});
   }
   else{
-    alert("Please click '√' to save edition.");
+	  Materialize.toast("Please click '√' to save edition.!", 3000);
   }
 }
 
@@ -195,14 +214,19 @@ var showAllUsers = function(users){
 		+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
 		+ uid +')"><i class="material-icons">delete</i></button></td></tr>';  
 		$("#usersTbody").append(content);
-		if((users[i].authorities[0] = undefined || users[i].authorities[0].authority !== 'ROLE_USER') && (users[i].authorities[1] === undefined || users[i].authorities[1].authority !== 'ROLE_USER')){
+		if(u.username === 'Bilbo'){
+			$("#usersTbody").children().eq(0).children().eq(1).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(0).children().eq(2).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(0).children().eq(3).html("");
+		}
+		if((users[i].authorities[0] === undefined || users[i].authorities[0].authority !== 'ROLE_USER') && (users[i].authorities[1] === undefined || users[i].authorities[1].authority !== 'ROLE_USER')){
 		  $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', false);
 	    }
 	    else{
 	      $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', true);
 	    }
 		
-		if((users[i].authorities[0] = undefined || users[i].authorities[0].authority !== 'ROLE_ADMIN') && (users[i].authorities[1] === undefined ||users[i].authorities[1].authority !== 'ROLE_ADMIN')){
+		if((users[i].authorities[0] === undefined || users[i].authorities[0].authority !== 'ROLE_ADMIN') && (users[i].authorities[1] === undefined ||users[i].authorities[1].authority !== 'ROLE_ADMIN')){
 		  $("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('checked', false);
 	    }
 	    else{
@@ -210,6 +234,10 @@ var showAllUsers = function(users){
 	    }
 		
 	}
+	 var count = 0;
+	  $('.slideIn').each(function(index, value){
+	      setTimeout(function(){$('.slideIn').eq(index).addClass('show')}, 0);
+	   });
 
 }
 
@@ -222,6 +250,39 @@ var getAllUsers = function(){
     });
 }
 
+var showNewUser = function(u){
+	if(u){
+		var uid = "'" + u.id + "'"
+		content = 
+		'<tr id="'
+		+ u.id + '"><td>' 
+		+ u.username + '</td><td><input type="checkbox" id="c1_' 
+		+ u.id +'" class="userCheck"/><label for="c1_'
+		+ u.id + '"></label></td><td><input type="checkbox" id="c2_' 
+		+ u.id + '" class="adminCheck"/><label for="c2_' 
+		+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
+		+ uid +')"><i class="material-icons">delete</i></button></td></tr>';  
+		$("#usersTbody").append(content);
+		
+		if((u.authorities[0] = undefined || u.authorities[0].authority !== 'ROLE_USER') && (u.authorities[1] === undefined || u.authorities[1].authority !== 'ROLE_USER')){
+		  $("#usersTbody tr:last-child").children().eq(1).children().eq(0).prop('checked', false);
+	    }
+	    else{
+	      $("#usersTbody tr:last-child").children().eq(1).children().eq(0).prop('checked', true);
+	    }
+		
+		if((u.authorities[0] = undefined || u.authorities[0].authority !== 'ROLE_ADMIN') && (u.authorities[1] === undefined || u.authorities[1].authority !== 'ROLE_ADMIN')){
+			$("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', false);
+	    }
+	    else{
+	    	$("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', true);
+	    }
+	}
+	else{
+		Materialize.toast('User already exists!', 3000);
+	}
+}
+
 var addUser = function(){
   var username = $('#userName').val();
   var body = {username: username}
@@ -231,7 +292,8 @@ var addUser = function(){
 	  headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
 	  type: "POST", 
 	  data: JSON.stringify(body),
-	  
+	  success: showNewUser,
+	  error: redirectToLogin
 	})
 }
 
@@ -249,14 +311,20 @@ var updateUser = function(t){
 	var body = {username: username}
 	 $.ajax('api/users/' + t.prop('id').substring(3) + '/?user=' + user + '&admin=' + admin, 
 	{
-	  type: "PUT"	  
+	  type: "PUT",
+	  success: function(r){
+		  if(!r){
+			  Materialize.toast('Update failed', 3000);
+			  setTimeout(redirectToTasks, 1000);
+		  }  
+	  }
 	})
 }
 
 var deleteUser = function(id){
 	 $.ajax('api/users/' + id, 
 	{
-	  type: "DELETE", success: deleteAnimation(id), error: redirectToLogin 
+	  type: "DELETE", success: deleteAnimation, error: redirectToLogin 
 	})
 }
 
@@ -273,7 +341,6 @@ var logout = function(){
 }
 
 var judgePage = function(currentPage){
-	console.log(typeof user);
 	if(typeof user == 'string'){
 		redirectToLogin();
 	}
@@ -290,21 +357,27 @@ var judgePage = function(currentPage){
 			
 	});
 	if(currentPage === "taskts"){
-		if(isUser && !isAdmin)
+		if(isUser && !isAdmin){
 			$(".pages").children().eq(1).css('display', 'none');
+			getAll();
+		}
 		else if(!isUser && isAdmin)
 			redirectToUserManagement();
 		else if(!isUser && !isAdmin)
 			redirectToLogin();
+		else
+			getAll();
 	}
 	else if(currentPage === "userManagement"){
 		if(isUser && !isAdmin)
 			redirectToTasks();
 		else if(!isUser && isAdmin){
 			$(".pages").children().eq(0).css('display', 'none');
+			getAllUsers();
 		}
 		else if(!isUser && !isAdmin)
 			redirectToLogin();
+		else
 		getAllUsers();
 	}
 }

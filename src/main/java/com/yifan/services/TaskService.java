@@ -91,19 +91,19 @@ public class TaskService {
 	 public Integer compareDates(DateFormat df, Date oldDate, Date newDate) {
 	        //how to check if two dates are equals in java
 	        if (oldDate.equals(newDate)) {
-	            System.out.println(df.format(oldDate) + " and " + df.format(newDate) + " are equal to each other");
+//	            System.out.println(df.format(oldDate) + " and " + df.format(newDate) + " are equal to each other");
 	            return 0;
 	        }
 
 	        //checking if date1 comes before date2
 	        if (oldDate.before(newDate)) {
-	            System.out.println(df.format(oldDate) + " comes before " + df.format(newDate));
+//	            System.out.println(df.format(oldDate) + " comes before " + df.format(newDate));
 	            return -1;
 	        }
 
 	        //checking if date1 comes after date2
 	        if (oldDate.after(newDate)) {
-	            System.out.println(df.format(oldDate) + " comes after " + df.format(newDate));
+//	            System.out.println(df.format(oldDate) + " comes after " + df.format(newDate));
 	            return 1;
 	        }
 	        return 0;
