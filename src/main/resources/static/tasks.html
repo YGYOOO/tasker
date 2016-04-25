@@ -27,16 +27,16 @@
       <h2>Tasker</h2>
       <a id="profile">
       </a>
-      <div id='top1' class="card-panel top grey lighten-5" onMouseOver="adddepth('top1')" onMouseOut="subdepth('top1')">
+      <div id='top1' class="card-panel top grey lighten-5"  >
         Description&nbsp;&nbsp;
         <input id="description" type="text" placeholder="  task" style="width:180px">
         &nbsp;&nbsp;&nbsp;Color code&nbsp;
         <input id="colorCode" type="color" value="#000000" style="width:45px">
         &nbsp;&nbsp;&nbsp;Due Date&nbsp;&nbsp;
         <input id="dueDate" type="date" class="datepicker" style="width:130px">&nbsp;&nbsp;&nbsp;&nbsp;
-        <button class="btn-floating waves-effect waves-light btn" onclick="createTask()"><i class="material-icons">add</i></button>
+        <button class="btn-floating waves-effect waves-light btn cyan" onclick="createTask()"><i class="material-icons">add</i></button>
       </div>
-      <div id='top2' class="card-panel top grey lighten-5" onMouseOver="adddepth('top2')" onMouseOut="subdepth('top2')">
+      <div id='top2' class="card-panel top grey lighten-5">
         <input type="text" id="search1" placeholder="  search" style="width:150px">
         &nbsp;&nbsp;
         <input type="checkbox" id="c1"/>
@@ -45,7 +45,7 @@
         <input type="checkbox" id="c2"/>
         <label for="c2">Over-due only</label>
       </div>
-      <div id='tasks' class="card-panel grey lighten-5" onMouseOver="adddepth('tasks')" onMouseOut="subdepth('tasks')">
+      <div id='tasks' class="card-panel grey lighten-5">
         <table class=" highlight">
           <thead>
             <tr>
@@ -82,9 +82,6 @@
       });
       $(document).on('change','#c2',function(){
         $('#c1').prop('checked',false);
-        getAll();
-      });
-      $(document).on('change','#search1',function(){
         getAll();
       });
     })

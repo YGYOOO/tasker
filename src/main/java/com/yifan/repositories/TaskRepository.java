@@ -24,7 +24,6 @@ public class TaskRepository {
 	}
 	
 	public Task saveTask( Task task ) {
-		task.setId( UUID.randomUUID().toString() );
 		tasks.put(task.getId(), task);
 		return task;
 	}

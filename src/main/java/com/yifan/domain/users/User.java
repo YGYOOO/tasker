@@ -18,6 +18,10 @@ public class User implements UserDetails {
 	private String password;
 	private String username;
 	private String id;
+	
+	public User(){
+	}
+	
 	public List<Role> getRoles() {
 		return roles;
 	}

@@ -9,7 +9,7 @@ var redirectToLogin = function(){
   window.location.replace('/');
 }
 
-var redirectToTaskts = function(){
+var redirectToTasks = function(){
   window.location.replace('/tasks.html');
 }
 
@@ -54,7 +54,7 @@ var showTasks = function(result){
       + tasks[n].color + '"/></td><td onclick="editDueDate('+ t +')"><div style="float:left">'
       + convertDateFormat2(tasks[n].due) + '</div>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-pencil-square-o hvr-grow"></i></td><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="c_'
       + tasks[n].id + '" type="checkbox" class="taskAttr"/><label for="c_'
-      + tasks[n].id + '"></label></td><td><button class="waves-light waves-effect btn red btn-delete"'
+      + tasks[n].id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete"'
       + 'onclick="deleteTask('+ t +')"><i class="material-icons">delete</i></button></td></tr>';
       $('#tasksList').append(t);
       if(tasks[n].completed === 'true' || tasks[n].completed === true){
@@ -71,9 +71,9 @@ var showTasks = function(result){
 var createTask = function(){
   var description = $('#description').val();
   var colorCode = $('#colorCode').val();
-  var dueDate = $('#dueDate').val();
-  dueDate = convertDateFormat(dueDate);
-  if(description && dueDate){
+  var due = $('#dueDate').val();
+  dueDate = convertDateFormat(due);
+  if(description && due){
     var body = {description: description, color: colorCode,
       due: dueDate, completed: false};
     url = 'api/users/' + user.id + '/tasks';
@@ -85,7 +85,7 @@ var createTask = function(){
   else if(!description){
     alert('Please enter description!');
   }
-  else if(!dueDate){
+  else if(!due){
     alert('Please enter dueDate!');
   }
 }
@@ -98,7 +98,7 @@ var deleteAnimation = function(tid){
 
 var deleteTask = function(tid){
   url = 'api/users/' + user.id + '/tasks/' + tid;
-  $.ajax(url, {type: 'DELETE'});
+  $.ajax(url, {type: 'DELETE', success: deleteAnimation(tid), error: redirectToLogin});
 }
 
 var editDescription = function(tid){
@@ -180,14 +180,84 @@ var getAll = function(){
   $.ajax(url, {type: 'GET', success: showTasks, error: redirectToLogin});
 }
 
-var adddepth = function(id){
-  $( "#" + id ).removeClass('z-depth-1');
-  $( "#" + id ).addClass('z-depth-2');
+var showAllUsers = function(users){
+	var content = '';
+	for(var i in users){
+		u = users[i];
+		var uid = "'" + u.id + "'"
+		content = 
+		'<tr id="'
+		+ u.id + '"><td>' 
+		+ u.username + '</td><td><input type="checkbox" id="c1_' 
+		+ u.id +'" class="userCheck"/><label for="c1_'
+		+ u.id + '"></label></td><td><input type="checkbox" id="c2_' 
+		+ u.id + '" class="adminCheck"/><label for="c2_' 
+		+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
+		+ uid +')"><i class="material-icons">delete</i></button></td></tr>';  
+		$("#usersTbody").append(content);
+		if((users[i].authorities[0] = undefined || users[i].authorities[0].authority !== 'ROLE_USER') && (users[i].authorities[1] === undefined || users[i].authorities[1].authority !== 'ROLE_USER')){
+		  $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', false);
+	    }
+	    else{
+	      $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', true);
+	    }
+		
+		if((users[i].authorities[0] = undefined || users[i].authorities[0].authority !== 'ROLE_ADMIN') && (users[i].authorities[1] === undefined ||users[i].authorities[1].authority !== 'ROLE_ADMIN')){
+		  $("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('checked', false);
+	    }
+	    else{
+	      $("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('checked', true);
+	    }
+		
+	}
+
 }
 
-var subdepth = function(id){
-  $( "#" + id ).removeClass('z-depth-2');
-  $( "#" + id ).addClass('z-depth-1');
+var getAllUsers = function(){
+  $.ajax('api/users', 
+    {
+	  type: 'GET',
+	  success: showAllUsers,
+	  error: redirectToLogin
+    });
+}
+
+var addUser = function(){
+  var username = $('#userName').val();
+  var body = {username: username}
+	 
+  $.ajax('api/user', 
+	{
+	  headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+	  type: "POST", 
+	  data: JSON.stringify(body),
+	  
+	})
+}
+
+var updateUser = function(t){
+	var user = false
+	var admin = false;
+	if(t.parent().parent().children().eq(1).children().eq(0).prop('checked')){
+	  user = true;
+	}
+	if(t.parent().parent().children().eq(2).children().eq(0).prop('checked')){
+	  admin = true;
+	}
+	console.log(user+" "+admin);
+	var username = t.parent().parent().children().eq(0).html();
+	var body = {username: username}
+	 $.ajax('api/users/' + t.prop('id').substring(3) + '/?user=' + user + '&admin=' + admin, 
+	{
+	  type: "PUT"	  
+	})
+}
+
+var deleteUser = function(id){
+	 $.ajax('api/users/' + id, 
+	{
+	  type: "DELETE", success: deleteAnimation(id), error: redirectToLogin 
+	})
 }
 
 var login = function(){
@@ -195,7 +265,7 @@ var login = function(){
   var password = $('#password').val();
   body={username: username, password: password};
   url = '/login';
-  $.ajax(url, {type: 'POST', data: body, success: redirectToTaskts, error: loginError});
+  $.ajax(url, {type: 'POST', data: body, success: redirectToTasks, error: loginError});
 }
 
 var logout = function(){
@@ -203,6 +273,11 @@ var logout = function(){
 }
 
 var judgePage = function(currentPage){
+	console.log(typeof user);
+	if(typeof user == 'string'){
+		redirectToLogin();
+	}
+	
 	var isAdmin = false;
 	var isUser = false;
 	user.roles.forEach(function(e){
@@ -225,9 +300,23 @@ var judgePage = function(currentPage){
 	else if(currentPage === "userManagement"){
 		if(isUser && !isAdmin)
 			redirectToTasks();
-		else if(!isUser && isAdmin)
+		else if(!isUser && isAdmin){
 			$(".pages").children().eq(0).css('display', 'none');
+		}
 		else if(!isUser && !isAdmin)
 			redirectToLogin();
+		getAllUsers();
 	}
 }
+
+$(document).on('change','.taskAttr',function(){
+    updateTaks($(this).parent().parent().attr('id'));
+ });
+
+$(document).on('change','.userCheck',function(){
+    updateUser($(this));
+ });
+
+$(document).on('change','.adminCheck',function(){
+	updateUser($(this));
+ });

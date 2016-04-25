@@ -1,11 +1,8 @@
 package com.yifan.controllers;
 
 import java.security.Principal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yifan.domain.things.Task;
 import com.yifan.services.TaskService;
+import com.yifan.domain.users.Role;
 import com.yifan.domain.users.User;
 import com.yifan.services.UserService;
 
@@ -87,10 +85,53 @@ public class ApiController {
 		return taskService.deleteTask(user, tid);
 	}
 	
-	@Secured({"ROLE_ADMIN", "ROLE_USER"} )
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@RequestMapping( value = "/user", method = RequestMethod.GET)
-	public User getAuthenticatedUser( Principal p ) {
-		User user = userService.loadUserByUsername (p.getName() );
-		return user;
+	public User getAuthenticatedUser( @AuthenticationPrincipal User user ) {
+		User user1 = userService.findUserById(user.getId() );
+		return user1;
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/user", method = RequestMethod.POST)
+	public User createUser(@RequestBody User user){
+		return userService.createUser(user);
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	public List<User> getUsers(){
+		return userService.getUsers();
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/users/{uid}", method = RequestMethod.PUT)
+	public User updateUser(
+			@PathVariable String uid,
+			@RequestParam(defaultValue="false", required=false) String user,
+			@RequestParam(defaultValue="false", required=false) String admin
+			){
+		User u = userService.findUserById(uid);
+		boolean isUser = true;
+		boolean isAdmin = true;
+		if(user.equals("false"))
+			isUser = false;
+		if(admin.equals("false"))
+			isAdmin = false;
+		List<Role> roles = Arrays.asList(new Role[]{new Role("")});
+		if(isUser && isAdmin)
+			roles = Arrays.asList( new Role[] { new Role("ROLE_USER"), new Role("ROLE_ADMIN") } );
+		else if(isUser && !isAdmin)
+			roles = Arrays.asList(new Role[]{new Role("ROLE_USER")});
+		else if(!isUser && isAdmin)
+			roles = Arrays.asList(new Role[]{new Role("ROLE_ADMIN")});
+		u.setRoles(roles);
+		return userService.updateUser(u);
+	}
+	
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(value = "/users/{uid}", method = RequestMethod.DELETE)
+	public User deleteUser(@PathVariable String uid){
+		return userService.deleteUser(uid);
 	}
 }

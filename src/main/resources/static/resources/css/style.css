@@ -47,3 +47,20 @@
   padding-top:10px !important;
   padding-bottom:10px !important;
 }
+
+#addUser{
+  width: 300px;
+  margin:0 auto;
+  margin-top: 35px;
+  text-align: center
+}
+
+#manageUser{
+  width: 600px;
+  margin:0 auto;
+  margin-top: 20px;
+}
+
+.color_pink{
+	backgroud-color: rgb(238, 110, 115) !important;
+}
