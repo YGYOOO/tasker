@@ -57,6 +57,7 @@ var showTasks = function(result){
       + tasks[n].id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete"'
       + 'onclick="deleteTask('+ t +')"><i class="material-icons">delete</i></button></td></tr>';
       $('#tasksList').append(t);
+      $('i').css('cursor', 'pointer');
       if(tasks[n].completed === 'true' || tasks[n].completed === true){
         $('#' + tasks[n].id).children().eq(3).children().prop('checked', true);
       }
@@ -83,6 +84,7 @@ var showNewTask = function(task){
     + task.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete"'
     + 'onclick="deleteTask('+ t +')"><i class="material-icons">delete</i></button></td></tr>';
     $('#tasksList').append(t);
+    $('i').css('cursor', 'pointer');
 }
 
 var createTask = function(){
@@ -129,6 +131,7 @@ var editDescription = function(tid){
     + $('#' + tid).children().eq(0).children().eq(0).html()
     + '"><i class="fa fa-check hvr-grow" onclick="editDescriptionDone('+ t +')"></i></div>';
     $('#' + tid).prepend(i);
+    $('i').css('cursor', 'pointer');
   }
   else{
     Materialize.toast("Please click '√' to save edition.!", 3000);
@@ -158,6 +161,7 @@ var editDueDate = function(tid){
     selectYears: 16,
     format: '  mm/dd/yyyy',
   });
+  $('i').css('cursor', 'pointer');
   }
   else{
 	  Materialize.toast("Please click '√' to save edition.!", 3000);
@@ -207,32 +211,40 @@ var showAllUsers = function(users){
 		content = 
 		'<tr id="'
 		+ u.id + '"><td>' 
-		+ u.username + '</td><td><input type="checkbox" id="c1_' 
+		+ u.username + '</td><td style="width:180px"><input style="width:120px" value="'
+		+ u.password + '"><i class="fa fa-check hvr-grow" onclick="updateUser($(this))"></i></td><td><input type="checkbox" id="c1_' 
 		+ u.id +'" class="userCheck"/><label for="c1_'
 		+ u.id + '"></label></td><td><input type="checkbox" id="c2_' 
 		+ u.id + '" class="adminCheck"/><label for="c2_' 
 		+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
 		+ uid +')"><i class="material-icons">delete</i></button></td></tr>';  
 		$("#usersTbody").append(content);
+		$('i').css('cursor', 'pointer');
 		if(u.username === 'Bilbo'){
-			$("#usersTbody").children().eq(0).children().eq(1).children().eq(0).prop('disabled', 'disabled');
-			$("#usersTbody").children().eq(0).children().eq(2).children().eq(0).prop('disabled', 'disabled');
-			$("#usersTbody").children().eq(0).children().eq(3).html("");
+			$("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('type', 'password');
+			$("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(i).children().eq(3).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(i).children().eq(4).html("");
 		}
 		if((users[i].authorities[0] === undefined || users[i].authorities[0].authority !== 'ROLE_USER') && (users[i].authorities[1] === undefined || users[i].authorities[1].authority !== 'ROLE_USER')){
-		  $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', false);
-	    }
-	    else{
-	      $("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('checked', true);
-	    }
-		
-		if((users[i].authorities[0] === undefined || users[i].authorities[0].authority !== 'ROLE_ADMIN') && (users[i].authorities[1] === undefined ||users[i].authorities[1].authority !== 'ROLE_ADMIN')){
 		  $("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('checked', false);
 	    }
 	    else{
 	      $("#usersTbody").children().eq(i).children().eq(2).children().eq(0).prop('checked', true);
 	    }
 		
+		if((users[i].authorities[0] === undefined || users[i].authorities[0].authority !== 'ROLE_ADMIN') && (users[i].authorities[1] === undefined ||users[i].authorities[1].authority !== 'ROLE_ADMIN')){
+		  $("#usersTbody").children().eq(i).children().eq(3).children().eq(0).prop('checked', false);
+	    }
+	    else{
+	      $("#usersTbody").children().eq(i).children().eq(3).children().eq(0).prop('checked', true);
+	    }
+		if(user.username !== 'Bilbo'){
+			$("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('disabled', 'disabled');
+			$("#usersTbody").children().eq(i).children().eq(1).children().eq(0).prop('type', 'password');
+			$("#usersTbody").children().eq(i).children().eq(1).children().eq(1).remove();
+		}
 	}
 	 var count = 0;
 	  $('.slideIn').each(function(index, value){
@@ -254,28 +266,29 @@ var showNewUser = function(u){
 	if(u){
 		var uid = "'" + u.id + "'"
 		content = 
-		'<tr id="'
-		+ u.id + '"><td>' 
-		+ u.username + '</td><td><input type="checkbox" id="c1_' 
-		+ u.id +'" class="userCheck"/><label for="c1_'
-		+ u.id + '"></label></td><td><input type="checkbox" id="c2_' 
-		+ u.id + '" class="adminCheck"/><label for="c2_' 
-		+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
-		+ uid +')"><i class="material-icons">delete</i></button></td></tr>';  
+			'<tr id="'
+			+ u.id + '"><td>' 
+			+ u.username + '</td><td style="width:180px"><input style="width:120px" value="'
+			+ u.password + '"><i class="fa fa-check hvr-grow" onclick="updateUser($(this))"></i></td><td><input type="checkbox" id="c1_' 
+			+ u.id +'" class="userCheck"/><label for="c1_'
+			+ u.id + '"></label></td><td><input type="checkbox" id="c2_' 
+			+ u.id + '" class="adminCheck"/><label for="c2_' 
+			+ u.id + '"></label></td><td><button class="waves-light waves-effect btn cyan btn-delete" onclick="deleteUser('
+			+ uid +')"><i class="material-icons">delete</i></button></td></tr>';
 		$("#usersTbody").append(content);
-		
+		$('i').css('cursor', 'pointer');
 		if((u.authorities[0] = undefined || u.authorities[0].authority !== 'ROLE_USER') && (u.authorities[1] === undefined || u.authorities[1].authority !== 'ROLE_USER')){
-		  $("#usersTbody tr:last-child").children().eq(1).children().eq(0).prop('checked', false);
+		  $("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', false);
 	    }
 	    else{
-	      $("#usersTbody tr:last-child").children().eq(1).children().eq(0).prop('checked', true);
+	      $("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', true);
 	    }
 		
 		if((u.authorities[0] = undefined || u.authorities[0].authority !== 'ROLE_ADMIN') && (u.authorities[1] === undefined || u.authorities[1].authority !== 'ROLE_ADMIN')){
-			$("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', false);
+			$("#usersTbody tr:last-child").children().eq(3).children().eq(0).prop('checked', false);
 	    }
 	    else{
-	    	$("#usersTbody tr:last-child").children().eq(2).children().eq(0).prop('checked', true);
+	    	$("#usersTbody tr:last-child").children().eq(3).children().eq(0).prop('checked', true);
 	    }
 	}
 	else{
@@ -300,23 +313,26 @@ var addUser = function(){
 var updateUser = function(t){
 	var user = false
 	var admin = false;
-	if(t.parent().parent().children().eq(1).children().eq(0).prop('checked')){
+
+	if(t.parent().parent().children().eq(2).children().eq(0).prop('checked')){
 	  user = true;
 	}
-	if(t.parent().parent().children().eq(2).children().eq(0).prop('checked')){
+	if(t.parent().parent().children().eq(3).children().eq(0).prop('checked')){
 	  admin = true;
 	}
-	console.log(user+" "+admin);
-	var username = t.parent().parent().children().eq(0).html();
-	var body = {username: username}
-	 $.ajax('api/users/' + t.prop('id').substring(3) + '/?user=' + user + '&admin=' + admin, 
+	var password = t.parent().parent().children().eq(1).children().eq(0).val();
+//	var username = t.parent().parent().children().eq(0).html();
+	var id = t.parent().parent().prop('id');
+	 $.ajax('api/users/' + id + '?user=' + user + '&admin=' + admin + '&password=' + password, 
 	{
 	  type: "PUT",
 	  success: function(r){
 		  if(!r){
 			  Materialize.toast('Update failed', 3000);
 			  setTimeout(redirectToTasks, 1000);
-		  }  
+		  } else{
+			  Materialize.toast('Update successfully!', 3000);
+		  }
 	  }
 	})
 }

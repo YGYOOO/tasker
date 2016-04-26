@@ -118,8 +118,9 @@ public class ApiController {
 	@RequestMapping(value = "/users/{uid}", method = RequestMethod.PUT)
 	public User updateUser(
 			@PathVariable String uid,
-			@RequestParam(defaultValue="false", required=false) String user,
-			@RequestParam(defaultValue="false", required=false) String admin
+			@RequestParam(required=true) String user,
+			@RequestParam(required=true) String admin,
+			@RequestParam(required=true) String password
 			){
 		User u = userService.findUserById(uid);
 		if(u.getUsername().equals(superAdminName))
@@ -138,6 +139,7 @@ public class ApiController {
 		else if(!isUser && isAdmin)
 			roles = Arrays.asList(new Role[]{new Role("ROLE_ADMIN")});
 		u.setRoles(roles);
+		u.setPassword(password);
 		return userService.updateUser(u);
 	}
 	
